@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+#
+# Script to install and set up ROS2 for Docker containers and direct hardware installations.
+# Handles ROS2 package installation, rosdep configuration, and system setup.
+#
+set -euo pipefail
+
+# Verify root privileges before proceeding
+if [[ "$EUID" -ne 0 ]] ; then
+  echo "ERROR: ros install must be run as root, please run:"
+  echo "  sudo $0"
+  exit 1
+fi
+
+# Set up paths to find configuration files
+readonly SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+readonly CONFIG_DIR="$(realpath "$SCRIPT_DIR"/../config)"
+
+# Use locally stored GPG key instead of downloading from internet
+readonly ROS_KEY_CACHED_FILE="$CONFIG_DIR/ros.key.gpg"
+readonly ROS_KEY_DESTINATION="/usr/share/keyrings/ros-archive-keyring.gpg"
+
+# Copy the key file without prompting
+cp "$ROS_KEY_CACHED_FILE" "$ROS_KEY_DESTINATION"
+
+# Configure apt repository for ROS2 packages
+source "/etc/os-release"
+readonly ROS_DEB_ENTRY="deb\
+  [arch=$(dpkg --print-architecture) signed-by=$ROS_KEY_DESTINATION]\
+  http://packages.ros.org/ros2/ubuntu
+  $UBUNTU_CODENAME
+  main"
+# shellcheck disable=SC2086
+echo $ROS_DEB_ENTRY > /etc/apt/sources.list.d/ros2.list
+
+# Refresh package lists
+apt-get update
+
+# Install ROS2 desktop and additional tools
+readonly TARGET_ROS_DISTRO="jazzy"
+apt-get install -y --no-install-recommends \
+  ros-$TARGET_ROS_DISTRO-desktop \
+  ros-$TARGET_ROS_DISTRO-plotjuggler-ros \
+  ros-$TARGET_ROS_DISTRO-rosbag2-storage-mcap \
+  python3-colcon-common-extensions \
+  python3-colcon-clean \
+  python3-rosdep
+
+# Load ROS2 environment variables
+set +u
+source "/opt/ros/$TARGET_ROS_DISTRO/setup.bash"
+set -u
+
+# Set up rosdep package manager
+rm -rf /etc/ros/rosdep/sources.list.d  # Clean up any previous installations
+rosdep init
+rosdep update

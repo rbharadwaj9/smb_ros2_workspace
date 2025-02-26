@@ -55,5 +55,16 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Copy the entire scripts directory
+WORKDIR /
+COPY scripts/ /scripts/
+
+# Install ROS2
+RUN chmod +x /scripts/setup/setup-ros.sh
+RUN /scripts/setup/setup-ros.sh && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+
 # We'll let the devcontainer.json handle user creation
 # This prevents conflicts with the common-utils feature
