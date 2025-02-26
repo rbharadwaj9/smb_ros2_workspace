@@ -7,15 +7,19 @@ USERGROUP=$(id -gn)
 echo "Setting folder permissions for user: $USERNAME"
 
 # Change ownership of the current directory and all its contents recursively
-sudo chown -R $USERNAME:$USERGROUP .
+# sudo chown -R $USERNAME:$USERGROUP .
 
-# Set appropriate permissions
-# 755 for directories (rwx for owner, rx for group and others)
-# 644 for files (rw for owner, r for group and others)
-find . -type d -exec chmod 755 {} \;
-find . -type f -exec chmod 644 {} \;
+# # Set appropriate permissions
+# # 755 for directories (rwx for owner, rx for group and others)
+# # 644 for files (rw for owner, r for group and others)
+# find . -type d -exec chmod 755 {} \;
+# find . -type f -exec chmod 644 {} \;
 
-# Make sure script files are executable
-find . -name "*.sh" -exec chmod +x {} \;
+# # Make sure script files are executable
+# find . -name "*.sh" -exec chmod +x {} \;
 
-echo "Permissions updated successfully!"
+# echo "Permissions updated successfully!"
+
+# Setup fzf
+echo "eval \"\$(fzf --bash)\"" >> ~/.bashrc
+echo "source <(fzf --zsh)" >> ~/.zshrc

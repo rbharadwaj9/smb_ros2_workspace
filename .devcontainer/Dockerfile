@@ -1,4 +1,10 @@
+# syntax=docker/dockerfile:1
+
 FROM ubuntu:24.04
+
+# Add metadata labels
+LABEL org.opencontainers.image.description="Development container for ROS 2 projects"
+LABEL org.opencontainers.image.source="https://github.com/ETHZ-RobotX/smb_ros2_workspace"
 
 # Prevent interactive prompts during installation
 ARG DEBIAN_FRONTEND=noninteractive
@@ -26,6 +32,9 @@ RUN apt-get update && \
       ca-certificates \
       gnupg \
       lsb-release \
+      htop \
+      glances \
+      net-tools \
       python3 \
       python3-pip \
       python-is-python3 && \
@@ -39,6 +48,7 @@ RUN apt-get update && \
       cmake \
       gdb \
       bash-completion \
+      nano \
       vim \
       tmux \
       tree \
@@ -59,11 +69,15 @@ RUN apt-get update && \
 WORKDIR /
 COPY scripts/ /scripts/
 
+# Install fzf
+RUN chmod +x /scripts/setup/setup-fzf.sh
+RUN /scripts/setup/setup-fzf.sh 0.52.1
+
 # Install ROS2
-RUN chmod +x /scripts/setup/setup-ros.sh
-RUN /scripts/setup/setup-ros.sh && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# RUN chmod +x /scripts/setup/setup-ros.sh
+# RUN /scripts/setup/setup-ros.sh && \
+#     apt-get clean && \
+#     rm -rf /var/lib/apt/lists/*
 
 
 # We'll let the devcontainer.json handle user creation

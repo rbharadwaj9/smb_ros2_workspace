@@ -1,5 +1,5 @@
 {
-	"name": "Ubuntu 24.04 Dev Container",
+	"name": "SMB ROS2 Workspace",
 	"build": {
 		"context": "..",
 		"dockerfile": "Dockerfile"
@@ -19,10 +19,9 @@
 		"ghcr.io/devcontainers/features/common-utils:2": {
 			"username": "robotx",
 			"configureZshAsDefaultShell": true,
-			"uid": "automatic",
-			"gid": "automatic"
-		},
-		"ghcr.io/devcontainers/features/git:1": {}
+			"userUid": "automatic",
+			"userGid": "automatic"
+		}
 	},
 	"forwardPorts": [
 		6080,
