@@ -1,7 +1,7 @@
 {
 	"name": "Ubuntu 24.04 Dev Container",
 	"build": {
-		"context": ".",
+		"context": "..",
 		"dockerfile": "Dockerfile"
 	},
 	"runArgs": [
@@ -18,7 +18,9 @@
 	"features": {
 		"ghcr.io/devcontainers/features/common-utils:2": {
 			"username": "robotx",
-			"configureZshAsDefaultShell": true
+			"configureZshAsDefaultShell": true,
+			"uid": "automatic",
+			"gid": "automatic"
 		},
 		"ghcr.io/devcontainers/features/git:1": {}
 	},
