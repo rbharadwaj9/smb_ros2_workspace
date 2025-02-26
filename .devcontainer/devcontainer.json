@@ -41,6 +41,7 @@
 		"onAutoForward": "ignore"
 	},
 	"containerUser": "robotx",
+	"remoteUser": "robotx",
 	// "initializeCommand": "docker pull ghcr.io/ethz-robotx/rss_workspace:main",
 	"postCreateCommand": "bash ./.devcontainer/post-create.sh",
 	"customizations": {
