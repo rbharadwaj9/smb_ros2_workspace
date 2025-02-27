@@ -16,12 +16,6 @@
 		"QT_X11_NO_MITSHM": "1"
 	},
 	"features": {
-		"ghcr.io/devcontainers/features/common-utils:2": {
-			"username": "robotx",
-			"configureZshAsDefaultShell": true,
-			"userUid": "automatic",
-			"userGid": "automatic"
-		}
 	},
 	"forwardPorts": [
 		6080,
@@ -40,8 +34,8 @@
 	"otherPortsAttributes": {
 		"onAutoForward": "ignore"
 	},
-	"containerUser": "robotx",
-	"remoteUser": "robotx",
+	// "containerUser": "robotx",
+	// "remoteUser": "robotx",
 	// "initializeCommand": "docker pull ghcr.io/ethz-robotx/rss_workspace:main",
 	"postCreateCommand": "bash ./.devcontainer/post-create.sh",
 	"customizations": {
@@ -54,5 +48,7 @@
 				"tombonnike.vscode-status-bar-format-toggle"
 			]
 		}
-	}
+	},
+	"workspaceMount": "source=${localWorkspaceFolder},target=/smb_ros2_workspace,type=bind",
+	"workspaceFolder": "/smb_ros2_workspace"
 }
