@@ -10,6 +10,8 @@ if [ "${BASH_SOURCE[0]}" -ef "$0" ] ; then
   exit 1
 fi
 
+WORKSPACE_ROOT=$(dirname "$(dirname "$(readlink -f $0)")")
+
 # Detect installed ROS version and source the appropriate setup file
 if [ -d "/opt/ros/humble" ]; then
     ROS_DISTRO="humble"
@@ -37,6 +39,10 @@ source /opt/ros/$ROS_DISTRO/setup.zsh
 
 # Configure ROS to use FastDDS as the middleware implementation (enforcing default)
 export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+
+# Set fastdds config file
+export FASTRTPS_DEFAULT_PROFILES_FILE=$WORKSPACE_ROOT/scripts/config/fastdds-config.xml
+echo "FastDDS configured for localhost-only communication."
 
 # Set a specific ROS domain ID to isolate communication between ROS nodes
 export ROS_DOMAIN_ID=42
