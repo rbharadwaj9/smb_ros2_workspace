@@ -109,3 +109,6 @@ RUN apt-get clean && \
     # clear any temporary files (/tmp persists)
     rm -rf /tmp/*
 
+# Set VNC resolution
+ARG VNC_RESOLUTION=1920x1080x32
+ENV VNC_RESOLUTION=$VNC_RESOLUTION
