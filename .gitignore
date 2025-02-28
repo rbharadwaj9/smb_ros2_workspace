@@ -1,0 +1,83 @@
+# ROS 2 build directories
+build/
+install/
+log/
+
+# Colcon build artifacts
+.colcon_cd_root
+.colcon_install_layout
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# C++ artifacts
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+*.app
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+compile_commands.json
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ROS 2 specific
+.rosinstall
+.catkin_workspace
+
+# Ignore generated documentation
+doc/
+docs/_build/
+
+# Ignore rosbag files
+*.bag
+*.db3
+
+# Ignore ROS 2 parameter files that are generated
+*.yaml.tmp
+
+# Ignore ROS 2 launch argument files that are generated
+*.launch.py.tmp
+
+# Ignore ROS 2 message and service files that are generated
+*_msgs/msg/_*.py
+*_srvs/srv/_*.py
+*_msgs/msg/*.h
+*_srvs/srv/*.h
+
+# Ignore ROS 2 action files that are generated
+*_actions/action/_*.py
+*_actions/action/*.h
+
+# Ignore zsh history
+.zsh_history
