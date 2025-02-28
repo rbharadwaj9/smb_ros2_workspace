@@ -25,6 +25,7 @@ ENV LANG="en_US.UTF-8"
 RUN apt-get update && \
     apt-get install -yq --no-install-recommends \
       sudo \
+      gh \
       git \
       git-lfs \
       curl \
@@ -58,6 +59,11 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# install gitman for external repo dependency management
+RUN pip install --no-cache-dir --break-system-packages \
+      gitman \
+      pre-commit
+
 # Install code formatting and linting tools
 RUN apt-get update && \
     apt-get install -yq --no-install-recommends \
@@ -88,7 +94,14 @@ RUN apt-get update && \
     # Remove group with GID 1000 if it exists
     if getent group 1000 >/dev/null; then \
         groupdel $(getent group 1000 | cut -d: -f1); \
-    fi && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    fi
+
+# clean up
+RUN apt-get clean && \
+    # a big pip cache will exist in /root/.cache
+    pip cache purge && \
+    # gitman install cache, replaced by user host mount
+    rm -rf /root/.gitcache && \
+    # clear any temporary files (/tmp persists)
+    rm -rf /tmp/*
 
