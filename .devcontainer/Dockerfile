@@ -38,7 +38,9 @@ RUN apt-get update && \
       net-tools \
       python3 \
       python3-pip \
-      python-is-python3 && \
+      python-is-python3 \
+      software-properties-common && \
+    add-apt-repository universe && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -60,9 +62,11 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # install gitman for external repo dependency management
-RUN pip install --no-cache-dir --break-system-packages \
-      gitman \
-      pre-commit
+RUN if grep -q "24.04" /etc/os-release; then \
+      pip install --no-cache-dir --break-system-packages gitman pre-commit; \
+    else \
+      pip install --no-cache-dir gitman pre-commit; \
+    fi
 
 # Install code formatting and linting tools
 RUN apt-get update && \

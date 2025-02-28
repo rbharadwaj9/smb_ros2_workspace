@@ -36,8 +36,20 @@ echo $ROS_DEB_ENTRY > /etc/apt/sources.list.d/ros2.list
 # Refresh package lists
 apt-get update
 
+# Determine ROS2 distribution based on Ubuntu version
+if [[ "$VERSION_ID" == "24.04" ]]; then
+  readonly TARGET_ROS_DISTRO="jazzy"
+elif [[ "$VERSION_ID" == "22.04" ]]; then
+  readonly TARGET_ROS_DISTRO="humble"
+else
+  echo "ERROR: Unsupported Ubuntu version: $VERSION_ID"
+  echo "This script supports Ubuntu 22.04 (Humble) and 24.04 (Jazzy)"
+  exit 1
+fi
+
+echo "Installing ROS2 $TARGET_ROS_DISTRO for Ubuntu $VERSION_ID ($UBUNTU_CODENAME)"
+
 # Install ROS2 desktop and additional tools
-readonly TARGET_ROS_DISTRO="jazzy"
 apt-get install -y --no-install-recommends \
   ros-$TARGET_ROS_DISTRO-desktop \
   ros-$TARGET_ROS_DISTRO-plotjuggler-ros \
