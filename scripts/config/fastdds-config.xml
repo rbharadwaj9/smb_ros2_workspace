@@ -5,7 +5,7 @@
        when fragments are lost, resulting in complete payload loss -->
   <transport_descriptors>
     <transport_descriptor>
-      <transport_id>cs_udp_transport</transport_id>
+      <transport_id>smb_udp_transport</transport_id>
       <type>UDPv4</type>
       <maxMessageSize>1500</maxMessageSize>
       <maxInitialPeersRange>100</maxInitialPeersRange>
@@ -17,7 +17,7 @@
     <rtps>
       <!-- Override default transports with our custom transport configuration -->
       <userTransports>
-        <transport_id>smp_udp_transport</transport_id>
+        <transport_id>smb_udp_transport</transport_id>
       </userTransports>
       <useBuiltinTransports>false</useBuiltinTransports>
 
