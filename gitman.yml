@@ -1,0 +1,11 @@
+location: dependencies
+default_group: ''
+groups: []
+sources:
+  - name: smb_description
+    repo: https://github.com/PerFrivik/smb_description.git
+    rev: main
+    type: git
+    links:
+      - source: .
+        target: src/core/smb_description 
