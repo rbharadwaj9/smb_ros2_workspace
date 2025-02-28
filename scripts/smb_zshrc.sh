@@ -37,6 +37,12 @@ echo "Found ROS distribution: $ROS_DISTRO"
 # Setup the ROS environment in shells
 source /opt/ros/$ROS_DISTRO/setup.zsh
 
+# Source the workspace setup if it exists
+if [ -f "$WORKSPACE_ROOT/install/setup.zsh" ]; then
+    echo "Sourcing workspace setup from: $WORKSPACE_ROOT/install/setup.zsh"
+    source "$WORKSPACE_ROOT/install/setup.zsh"
+fi
+
 # Configure ROS to use FastDDS as the middleware implementation (enforcing default)
 export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
 
