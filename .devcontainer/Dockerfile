@@ -76,10 +76,7 @@ RUN find /scripts -type f -name "*.sh" -exec chmod +x {} \;
 RUN /scripts/setup/setup-fzf.sh 0.52.1
 
 # Install ROS2
-# RUN chmod +x /scripts/setup/setup-ros.sh
-# RUN /scripts/setup/setup-ros.sh && \
-#     apt-get clean && \
-#     rm -rf /var/lib/apt/lists/*
+RUN /scripts/setup/setup-ros.sh
 
 # Remove any existing user with UID 1000 and group with GID 1000
 RUN apt-get update && \
