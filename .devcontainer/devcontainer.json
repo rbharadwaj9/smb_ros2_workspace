@@ -2,7 +2,11 @@
 	"name": "SMB ROS2 Workspace",
 	"build": {
 		"context": "..",
-		"dockerfile": "Dockerfile"
+		"dockerfile": "Dockerfile",
+		"args": {
+			"USERNAME": "${localEnv:USER}",
+			"USER_UID": "${localEnv:UID}"
+		}
 	},
 	"runArgs": [
 		// Uncomment it if you have problems with the auto X11 forwarding
@@ -16,7 +20,14 @@
 		"QT_X11_NO_MITSHM": "1"
 	},
 	"features": {
+		"ghcr.io/devcontainers/features/common-utils:2": {
+			"username": "${localEnv:USER}",
+			"userUid": "${localEnv:UID}",
+			"userGid": "${localEnv:GID}",
+			"configureZshAsDefaultShell": true
+		}
 	},
+	"containerUser": "${localEnv:USER}",
 	"forwardPorts": [
 		6080,
 		5901
@@ -34,8 +45,6 @@
 	"otherPortsAttributes": {
 		"onAutoForward": "ignore"
 	},
-	// "containerUser": "robotx",
-	// "remoteUser": "robotx",
 	// "initializeCommand": "docker pull ghcr.io/ethz-robotx/rss_workspace:main",
 	"postCreateCommand": "bash ./.devcontainer/post-create.sh",
 	"customizations": {

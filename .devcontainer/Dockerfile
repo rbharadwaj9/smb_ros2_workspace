@@ -69,8 +69,10 @@ RUN apt-get update && \
 WORKDIR /
 COPY scripts/ /scripts/
 
+# Make all scripts executable
+RUN find /scripts -type f -name "*.sh" -exec chmod +x {} \;
+
 # Install fzf
-RUN chmod +x /scripts/setup/setup-fzf.sh
 RUN /scripts/setup/setup-fzf.sh 0.52.1
 
 # Install ROS2
@@ -79,6 +81,17 @@ RUN /scripts/setup/setup-fzf.sh 0.52.1
 #     apt-get clean && \
 #     rm -rf /var/lib/apt/lists/*
 
+# Remove any existing user with UID 1000 and group with GID 1000
+RUN apt-get update && \
+    apt-get install -y gettext && \
+    # Remove user with UID 1000 if it exists
+    if getent passwd 1000 >/dev/null; then \
+        userdel -f $(getent passwd 1000 | cut -d: -f1); \
+    fi && \
+    # Remove group with GID 1000 if it exists
+    if getent group 1000 >/dev/null; then \
+        groupdel $(getent group 1000 | cut -d: -f1); \
+    fi && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# We'll let the devcontainer.json handle user creation
-# This prevents conflicts with the common-utils feature
