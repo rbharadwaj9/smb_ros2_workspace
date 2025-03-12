@@ -7,15 +7,18 @@ from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_ros.actions import ComposableNodeContainer
+from launch_ros.descriptions import ComposableNode
+from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     return LaunchDescription([
-        DeclareLaunchArgument('launch_lidar', default_value='true', description='Launch LiDAR'),
-        DeclareLaunchArgument('launch_tracking_cam', default_value='true', description='Launch Tracking Camera'),
+        DeclareLaunchArgument('launch_lidar', default_value='false', description='Launch LiDAR'),
+        DeclareLaunchArgument('launch_tracking_cam', default_value='false', description='Launch Tracking Camera'),
         DeclareLaunchArgument('launch_depth_cam', default_value='false', description='Launch Depth Camera'),
-        DeclareLaunchArgument('launch_imu_interface', default_value='true', description='Launch IMU Interface'),
-        DeclareLaunchArgument('launch_rgb_cam', default_value='remote', description='Launch RGB Camera'),
-        DeclareLaunchArgument('launch_powerstatus', default_value='true', description='Launch Power Status'),
+        DeclareLaunchArgument('launch_imu_interface', default_value='false', description='Launch IMU Interface'),
+        DeclareLaunchArgument('launch_rgb_cam', default_value='true', description='Launch RGB Camera'),
+        DeclareLaunchArgument('launch_powerstatus', default_value='false', description='Launch Power Status'),
         DeclareLaunchArgument('tracking_cam_calib_odom_file', default_value='$(find smb)/config/tracking_camera_config.json', description='Path to config for odometry input to tracking camera'),
         DeclareLaunchArgument('smb_name', default_value='$(env SMB_NAME)', description='Name of the SMB in the format smb26x (relevant for calibrations)'),
         DeclareLaunchArgument('GPU_user', default_value='$(env USER)', description='Username to use on the Jetson Xavier GPU'),
@@ -91,48 +94,56 @@ def generate_launch_description():
         ], condition=IfCondition(LaunchConfiguration('launch_imu_interface'))),
 
         # RGB Camera (FLIR Driver)
-        GroupAction([
-            Node(
-                package='nodelet',
-                executable='nodelet',
-                name='camera_nodelet_manager',
-                parameters=[{'num_worker_threads': 4}],
-                output='screen'
-            ),
-            Node(
-                package='nodelet',
-                executable='nodelet',
-                name='rgb_camera_nodelet',
-                parameters=[{
-                    'frame_id': 'rgb_camera_optical_link',
-                    'serial': '0',
-                    'acquisition_frame_rate': 4,
-                    'acquisition_frame_rate_enable': True,
-                    'image_format_color_coding': 'BayerRG8',
-                    'color_processing_algorithm': 'HQ_LINEAR',
-                    'camera_info_url': 'package://smb_bringup/config/smb_cam0.yaml',
-                    'acquisition_mode': 'Continuous',
-                    'enable_trigger': 'Off',
-                    'exposure_mode': 'Timed',
-                    'exposure_auto': 'Continuous',
-                    'line_selector': 'Line2',
-                    'line_mode': 'Output',
-                    'line_source': 'ExposureActive',
-                    'line_inverter': False,
-                    'auto_exposure_time_upper_limit': 5000,
-                    'auto_exposure_time_lower_limit': 300,
-                    'auto_gain': 'Continuous',
-                    'auto_white_balance': 'Continuous'
-                }],
-                output='screen'
-            ),
-            Node(
-                package='nodelet',
-                executable='nodelet',
-                name='image_proc_debayer',
-                output='screen'
+              # RGB Camera (FLIR Driver)
+       GroupAction([
+            ComposableNodeContainer(
+                name='camera_container',
+                namespace='rgb_camera',
+                package='rclcpp_components',
+                executable='component_container',
+                composable_node_descriptions=[
+                    # FLIR Camera Driver
+                    ComposableNode(
+                        package='spinnaker_camera_driver',
+                        plugin='spinnaker_camera_driver::CameraDriver',
+                        name='rgb_camera_node',
+                        parameters=[{
+                            'frame_id': 'rgb_camera_optical_link',
+                            'serial_number': '0',
+                            'parameter_file': '/smb_ros2_workspace/src/core/smb_bringup/config/smb261.cam0.TEST.yaml',
+                            'acquisition_frame_rate': 4,
+                            'acquisition_frame_rate_enable': True,
+                            'image_format_color_coding': 'BayerRG8',
+                            'color_processing_algorithm': 'HQ_LINEAR',
+                            'camerainfo_url': 'file:///smb_ros2_workspace/src/core/smb_bringup/config/smb261.cam0.yaml',
+
+                            # Trigger and exposure settings
+                            'acquisition_mode': 'Continuous',
+                            'enable_trigger': 'Off',
+                            'exposure_mode': 'Timed',
+                            'exposure_auto': 'Continuous',
+                            'line_selector': 'Line2',
+                            'line_mode': 'Output',
+                            'line_source': 'ExposureActive',
+                            'line_inverter': False,
+                            'auto_exposure_time_upper_limit': 5000,
+                            'auto_exposure_time_lower_limit': 300,
+                            'auto_gain': 'Continuous',
+                            'auto_white_balance': 'Continuous'
+                        }],
+                    ),
+
+                    # Image Processing - Debayering
+                    ComposableNode(
+                        package='image_proc',
+                        plugin='image_proc::DebayerNode',
+                        name='image_proc_debayer',
+                    ),
+                ],
+                output='screen',
             )
-        ], condition=IfCondition(LaunchConfiguration('launch_rgb_cam'))),
+        ], condition=IfCondition(LaunchConfiguration('launch_rgb_cam'))
+), 
 
         # Power Status
         GroupAction([

@@ -1,0 +1,25 @@
+parameters:
+  - name: image_width
+    type: int
+    node: rgb_camera_node/image_width
+  - name: image_height
+    type: int
+    node: rgb_camera_node/image_height
+  - name: camera_name
+    type: int
+    node: rgb_camera_node/camera_name
+  - name: camera_matrix
+    type: double[]
+    node: rgb_camera_node/camera_matrix
+  - name: distortion_model
+    type: string
+    node: rgb_camera_node/distortion_model
+  - name: distortion_coefficients
+    type: double[]
+    node: rgb_camera_node/distortion_coefficients
+  - name: rectification_matrix
+    type: double[]
+    node: rgb_camera_node/rectification_matrix
+  - name: projection_matrix
+    type: double[]
+    node: rgb_camera_node/projection_matrix
