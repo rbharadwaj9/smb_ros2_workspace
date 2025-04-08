@@ -6,6 +6,8 @@ from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node, ComposableNodeContainer
 from launch_ros.descriptions import ComposableNode
 from launch_ros.substitutions import FindPackageShare
+from ament_index_python.packages import get_package_share_directory
+
 
 def generate_launch_description():
     # Declare all launch arguments
@@ -24,12 +26,14 @@ def generate_launch_description():
     ]
 
     # Robosense LiDAR
+    rslidar_config_file = get_package_share_directory('rslidar_sdk') + '/config/config.yaml'
     lidar_group = GroupAction([
         Node(
             package="rslidar_sdk",
             executable="rslidar_sdk_node",
             name="rslidar_sdk_node",
             output="screen",
+            parameters=[{'rslidar_config_path': rslidar_config_file}]
         )
     ], condition=IfCondition(LaunchConfiguration("launch_lidar")))
 
@@ -97,43 +101,52 @@ def generate_launch_description():
     ], condition=IfCondition(LaunchConfiguration("launch_imu_interface")))
 
     # RGB Camera (FLIR Driver)
+    # rgb_camera_group = GroupAction([
+    #     ComposableNodeContainer(
+    #         name="camera_container",
+    #         namespace="rgb_camera",
+    #         package="rclcpp_components",
+    #         executable="component_container",
+    #         composable_node_descriptions=[
+    #             ComposableNode(
+    #                 package="spinnaker_camera_driver",
+    #                 plugin="spinnaker_camera_driver::CameraDriver",
+    #                 name="rgb_camera_node",
+    #                 parameters=[{
+    #                     "frame_id": "rgb_camera_optical_link",
+    #                     "serial_number": "0",
+    #                     "parameter_file": "/smb_ros2_workspace/src/core/smb_bringup/config/smb261.cam0.yaml",
+    #                     "acquisition_frame_rate": 4,
+    #                     "acquisition_frame_rate_enable": True,
+    #                     "image_format_color_coding": "BayerRG8",
+    #                     "color_processing_algorithm": "HQ_LINEAR",
+    #                     # "camerainfo_url": "file:///smb_ros2_workspace/src/core/smb_bringup/config/smb261.cam0.yaml",
+    #                     "acquisition_mode": "Continuous",
+    #                     "enable_trigger": "Off",
+    #                     "exposure_mode": "Timed",
+    #                     "exposure_auto": "Continuous",
+    #                     "auto_exposure_time_upper_limit": 5000,
+    #                     "auto_exposure_time_lower_limit": 300,
+    #                     "auto_gain": "Continuous",
+    #                     "auto_white_balance": "Continuous",
+    #                 }],
+    #             ),
+    #             ComposableNode(
+    #                 package="image_proc",
+    #                 plugin="image_proc::DebayerNode",
+    #                 name="image_proc_debayer",
+    #             ),
+    #         ],
+    #         output="screen",
+    #     )
+    # ], condition=IfCondition(LaunchConfiguration("launch_rgb_cam")))
     rgb_camera_group = GroupAction([
-        ComposableNodeContainer(
-            name="camera_container",
-            namespace="rgb_camera",
-            package="rclcpp_components",
-            executable="component_container",
-            composable_node_descriptions=[
-                ComposableNode(
-                    package="spinnaker_camera_driver",
-                    plugin="spinnaker_camera_driver::CameraDriver",
-                    name="rgb_camera_node",
-                    parameters=[{
-                        "frame_id": "rgb_camera_optical_link",
-                        "serial_number": "0",
-                        "parameter_file": "/smb_ros2_workspace/src/core/smb_bringup/config/smb261.cam0.TEST.yaml",
-                        "acquisition_frame_rate": 4,
-                        "acquisition_frame_rate_enable": True,
-                        "image_format_color_coding": "BayerRG8",
-                        "color_processing_algorithm": "HQ_LINEAR",
-                        "camerainfo_url": "file:///smb_ros2_workspace/src/core/smb_bringup/config/smb261.cam0.yaml",
-                        "acquisition_mode": "Continuous",
-                        "enable_trigger": "Off",
-                        "exposure_mode": "Timed",
-                        "exposure_auto": "Continuous",
-                        "auto_exposure_time_upper_limit": 5000,
-                        "auto_exposure_time_lower_limit": 300,
-                        "auto_gain": "Continuous",
-                        "auto_white_balance": "Continuous",
-                    }],
-                ),
-                ComposableNode(
-                    package="image_proc",
-                    plugin="image_proc::DebayerNode",
-                    name="image_proc_debayer",
-                ),
-            ],
-            output="screen",
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                PathJoinSubstitution([
+                    FindPackageShare("spinnaker_camera_driver"), "launch", "driver_node.launch.py"
+                ])
+            )
         )
     ], condition=IfCondition(LaunchConfiguration("launch_rgb_cam")))
 
@@ -148,6 +161,19 @@ def generate_launch_description():
         )
     ], condition=IfCondition(LaunchConfiguration("launch_powerstatus")))
 
+        
+    # Visualize in Rviz
+    rviz_config = get_package_share_directory('rslidar_sdk')+'/rviz/rviz2.rviz'
+    
+    rviz_group = GroupAction([
+        Node(namespace='rviz2', 
+            package='rviz2', 
+            executable='rviz2', 
+            arguments=['-d',rviz_config]
+        )
+    ])
+
+
     return LaunchDescription(
         declared_arguments +
         [
@@ -157,5 +183,6 @@ def generate_launch_description():
             imu_interface_group,
             rgb_camera_group,
             power_status_group,
+            rviz_group,
         ]
     )
