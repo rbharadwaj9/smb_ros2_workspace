@@ -12,12 +12,11 @@ from ament_index_python.packages import get_package_share_directory
 def generate_launch_description():
     # Declare all launch arguments
     declared_arguments = [
-        DeclareLaunchArgument("launch_lidar", default_value="false", description="Launch LiDAR"),
+        DeclareLaunchArgument("launch_lidar", default_value="true", description="Launch LiDAR"),
         DeclareLaunchArgument("launch_tracking_cam", default_value="false", description="Launch Tracking Camera"),
         DeclareLaunchArgument("launch_depth_cam", default_value="false", description="Launch Depth Camera"),
         # FIXME: launch_imu_interface needs rosserial_python, but it does not exist in ros2, need to find another option
         DeclareLaunchArgument("launch_imu_interface", default_value="false", description="Launch IMU Interface"),
-         # FIXME: error: [rgb_camera_node]: [rgb_camera_node] does not match 0 in file /smb_ros2_workspace/src/core/smb_bringup/config/smb261.cam0.yaml
         DeclareLaunchArgument("launch_rgb_cam", default_value="true", description="Launch RGB Camera"),
         DeclareLaunchArgument("launch_powerstatus", default_value="false", description="Launch Power Status"),
         DeclareLaunchArgument("tracking_cam_calib_odom_file", default_value="$(find smb)/config/tracking_camera_config.json", description="Path to config for odometry input to tracking camera"),
@@ -163,7 +162,7 @@ def generate_launch_description():
 
         
     # Visualize in Rviz
-    rviz_config = get_package_share_directory('rslidar_sdk')+'/rviz/rviz2.rviz'
+    rviz_config = get_package_share_directory('smb_bringup')+'/config/smb_vis.rviz'
     
     rviz_group = GroupAction([
         Node(namespace='rviz2', 

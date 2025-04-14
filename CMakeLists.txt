@@ -7,11 +7,14 @@ add_compile_options(-std=c++17)
 # Find required packages
 find_package(ament_cmake REQUIRED)
 
-# Install launch files
+# Install files
 install(
-  DIRECTORY launch
+  DIRECTORY 
+  launch
+  config
   DESTINATION share/${PROJECT_NAME}
 )
+
 
 # Ament package
 ament_package()
