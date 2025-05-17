@@ -42,5 +42,10 @@ sources:
     rev: fix/robotx-workspace
     type: git
     links:
+  - name: smb_ui_ros2
+    repo: https://github.com/ETHZ-RobotX/smb_ui_ros2.git
+    rev: main
+    type: git
+    links:
       - source: .
-        target: src/core/smb_rviz_plugins
+        target: src/core/smb_ui
