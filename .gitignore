@@ -88,6 +88,7 @@ src/core/smb_description
 src/core/smb_gazebo
 src/core/smb_low_level_controller_gazebo
 src/core/smb_kinematics
+src/core/smb_rviz_plugins
 src/estimation/direct_lidar_inertial_odometry
 
 # Data files
