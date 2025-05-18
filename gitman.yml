@@ -49,3 +49,10 @@ sources:
     links:
       - source: .
         target: src/core/smb_ui
+  - name: graph_msf_dev
+    repo: https://github.com/agawel-bdai/graph_msf_dev.git
+    rev: feature/restructuring
+    type: git
+    links:
+      - source: .
+        target: src/estimation/graph_msf_dev

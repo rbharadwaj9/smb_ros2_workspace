@@ -91,6 +91,7 @@ src/core/smb_kinematics
 src/core/smb_ui
 src/visualization/smb_rviz_plugins
 src/estimation/direct_lidar_inertial_odometry
+src/estimation/graph_msf_dev
 
 # Data files
 /data/rosbags/*
