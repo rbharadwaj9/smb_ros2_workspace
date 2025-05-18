@@ -33,6 +33,7 @@ apt-get install -y \
     git \
     python3-colcon-common-extensions \
     python3-colcon-clean \
+    python3-dev \
     libeigen3-dev \
     libtbb-dev \
     ros-$TARGET_ROS_DISTRO-kdl-parser \
@@ -60,38 +61,39 @@ apt-get install -y \
 
 # Install latest CMake
 # Check if CMake is already installed with version >= 3.31.0
-# if command -v cmake >/dev/null 2>&1; then
-#     cmake_version=$(cmake --version | head -n1 | awk '{print $3}')
-#     if [ "$(printf '%s\n' "3.31.0" "$cmake_version" | sort -V | head -n1)" = "3.31.0" ]; then
-#         echo "CMake version $cmake_version is already installed and meets minimum requirements"
-#     else
-#         echo "Installing CMake..."
-#         wget https://github.com/Kitware/CMake/releases/download/v3.31.0-rc1/cmake-3.31.0-rc1.tar.gz -P /tmp
-#         cd /tmp
-#         tar -xf cmake-3.31.0-rc1.tar.gz
-#         cd cmake-3.31.0-rc1
-#         ./configure
-#         make -j$(nproc)
-#         make install
-#         cd /tmp
-#         rm -rf cmake-3.31.0-rc1 cmake-3.31.0-rc1.tar.gz
-#         echo "CMake installed successfully"
-#     fi
-# else
-#     echo "Installing CMake..."
-#     wget https://github.com/Kitware/CMake/releases/download/v3.31.0-rc1/cmake-3.31.0-rc1.tar.gz -P /tmp
-#     cd /tmp
-#     tar -xf cmake-3.31.0-rc1.tar.gz
-#     cd cmake-3.31.0-rc1
-#     ./configure
-#     make -j$(nproc)
-#     make install
-#     cd /tmp
-#     rm -rf cmake-3.31.0-rc1 cmake-3.31.0-rc1.tar.gz
-#     echo "CMake installed successfully"
-# fi
+if command -v cmake >/dev/null 2>&1; then
+    cmake_version=$(cmake --version | head -n1 | awk '{print $3}')
+    if [ "$(printf '%s\n' "3.31.0" "$cmake_version" | sort -V | head -n1)" = "3.31.0" ]; then
+        echo "CMake version $cmake_version is already installed and meets minimum requirements"
+    else
+        echo "Installing CMake..."
+        wget https://github.com/Kitware/CMake/releases/download/v3.31.0-rc1/cmake-3.31.0-rc1.tar.gz -P /tmp
+        cd /tmp
+        tar -xf cmake-3.31.0-rc1.tar.gz
+        cd cmake-3.31.0-rc1
+        ./configure
+        make -j$(nproc)
+        make install
+        cd /tmp
+        rm -rf cmake-3.31.0-rc1 cmake-3.31.0-rc1.tar.gz
+        echo "CMake installed successfully"
+    fi
+else
+    echo "Installing CMake..."
+    wget https://github.com/Kitware/CMake/releases/download/v3.31.0-rc1/cmake-3.31.0-rc1.tar.gz -P /tmp
+    cd /tmp
+    tar -xf cmake-3.31.0-rc1.tar.gz
+    cd cmake-3.31.0-rc1
+    ./configure
+    make -j$(nproc)
+    make install
+    cd /tmp
+    rm -rf cmake-3.31.0-rc1 cmake-3.31.0-rc1.tar.gz
+    echo "CMake installed successfully"
+fi
 
 # Install GTSAM
+export PATH=/usr/local/bin:$PATH
 # Check if GTSAM is already installed by looking for a key header file
 if [ -f "/usr/local/include/gtsam/base/Vector.h" ]; then
     echo "GTSAM is already installed"
@@ -141,14 +143,5 @@ fi
 # rm -rf Open3D-${OPEN3D_VERSION}
 
 # exit 0
-
-# Set environment variables - bashrc
-# echo "export CMAKE_PREFIX_PATH=$HOME/.local/:$CMAKE_PREFIX_PATH" >> $HOME/.bashrc
-# echo "export LD_LIBRARY_PATH=$HOME/.local/lib/:$LD_LIBRARY_PATH" >> $HOME/.bashrc
-# echo "export LIBRARY_PATH=$LIBRARY_PATH:$LD_LIBRARY_PATH" >> $HOME/.bashrc
-# # Set environment variables - zshrc
-# echo "export CMAKE_PREFIX_PATH=$HOME/.local/:$CMAKE_PREFIX_PATH" >> $HOME/.zshrc
-# echo "export LD_LIBRARY_PATH=$HOME/.local/lib/:$LD_LIBRARY_PATH" >> $HOME/.zshrc
-# echo "export LIBRARY_PATH=$LIBRARY_PATH:$LD_LIBRARY_PATH" >> $HOME/.zshrc
 
 echo "Graph MSF dependencies installation completed for ROS2 $TARGET_ROS_DISTRO!"
