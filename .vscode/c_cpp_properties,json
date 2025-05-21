@@ -3,8 +3,11 @@
       {
           "name": "Linux",
           "includePath": [
-              "${workspaceFolder}/**",
-              "/opt/ros/${ROS_DISTRO}/include/**"
+              "${workspaceFolder}/src/**",
+              "${workspaceFolder}/dependencies/**",
+              "${workspaceFolder}/install/**",
+              "/opt/ros/${ROS_DISTRO}/include/**",
+              "/usr/include/eigen3/**"
           ],
           "defines": [],
           "compilerPath": "/usr/bin/gcc",
