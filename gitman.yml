@@ -63,3 +63,10 @@ sources:
     links:
       - source: .
         target: src/estimation/holistic_fusion
+  - name: meta_smb_sim_ros2
+    repo: https://github.com/ETHZ-RobotX/meta_smb_sim_ros2.git
+    rev: fix/robotx-workspace
+    type: git
+    links:
+      - source: .
+        target: src/meta_packages/meta_smb_sim

@@ -93,6 +93,7 @@ src/visualization/smb_rviz_plugins
 src/estimation/direct_lidar_inertial_odometry
 src/estimation/graph_msf_dev
 src/estimation/holistic_fusion
+src/meta_packages/meta_smb_sim
 
 # Data files
 /data/rosbags/*
