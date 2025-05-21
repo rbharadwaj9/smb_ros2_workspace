@@ -90,6 +90,9 @@ RUN /scripts/setup/setup-fzf.sh 0.52.1
 # Install ROS2
 RUN /scripts/setup/setup-ros.sh
 
+# Install Graph MSF
+RUN /scripts/setup/setup-graph-msf.sh
+
 # Remove any existing user with UID 1000 and group with GID 1000
 RUN apt-get update && \
     apt-get install -y gettext && \
