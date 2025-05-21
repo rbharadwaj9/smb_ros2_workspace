@@ -59,39 +59,6 @@ apt-get install -y \
 # ros-$TARGET_ROS_DISTRO-eigen-conversions \
 # ros-$TARGET_ROS_DISTRO-jsk-rviz-plugins \
 
-# Install latest CMake
-# Check if CMake is already installed with version >= 3.31.0
-if command -v cmake >/dev/null 2>&1; then
-    cmake_version=$(cmake --version | head -n1 | awk '{print $3}')
-    if [ "$(printf '%s\n' "3.31.0" "$cmake_version" | sort -V | head -n1)" = "3.31.0" ]; then
-        echo "CMake version $cmake_version is already installed and meets minimum requirements"
-    else
-        echo "Installing CMake..."
-        wget https://github.com/Kitware/CMake/releases/download/v3.31.0-rc1/cmake-3.31.0-rc1.tar.gz -P /tmp
-        cd /tmp
-        tar -xf cmake-3.31.0-rc1.tar.gz
-        cd cmake-3.31.0-rc1
-        ./configure
-        make -j$(nproc)
-        make install
-        cd /tmp
-        rm -rf cmake-3.31.0-rc1 cmake-3.31.0-rc1.tar.gz
-        echo "CMake installed successfully"
-    fi
-else
-    echo "Installing CMake..."
-    wget https://github.com/Kitware/CMake/releases/download/v3.31.0-rc1/cmake-3.31.0-rc1.tar.gz -P /tmp
-    cd /tmp
-    tar -xf cmake-3.31.0-rc1.tar.gz
-    cd cmake-3.31.0-rc1
-    ./configure
-    make -j$(nproc)
-    make install
-    cd /tmp
-    rm -rf cmake-3.31.0-rc1 cmake-3.31.0-rc1.tar.gz
-    echo "CMake installed successfully"
-fi
-
 # Install GTSAM
 export PATH=/usr/local/bin:$PATH
 # Check if GTSAM is already installed by looking for a key header file
