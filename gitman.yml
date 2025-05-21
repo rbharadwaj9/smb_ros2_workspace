@@ -49,13 +49,6 @@ sources:
     links:
       - source: .
         target: src/core/smb_ui
-  - name: holistic_fusion
-    repo: https://github.com/leggedrobotics/holistic_fusion.git
-    rev: feature/ros2
-    type: git
-    links:
-      - source: .
-        target: src/estimation/holistic_fusion
   - name: meta_smb_sim_ros2
     repo: https://github.com/ETHZ-RobotX/meta_smb_sim_ros2.git
     rev: main
