@@ -17,6 +17,20 @@ To build the Docker image manually:
 ```bash
 docker build --file .github/docker/Dockerfile --tag smb_ros2_workspace:main .
 ```
+
+### VSCode Dev Container Setup 🛠️
+
+1. Install the "Dev Containers" extension in VSCode
+2. Open the command palette (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>)
+3. Select "Dev Containers: Reopen in Container"
+4. VSCode will automatically:
+   - Build the container if not already built
+   - Mount your workspace
+   - Install all required extensions
+   - Configure the development environment
+
+Note: Make sure Docker is running on your system before opening the dev container.
+
 ## Available Aliases 🚀
 
 ### ROS2 Recording 📹
