@@ -16,4 +16,4 @@ architecture=$(dpkg --print-architecture)
 
 FZF_BINARY_TAR="fzf-${FZF_VERSION}-linux_${architecture}.tar.gz"
 curl -sSL "https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/${FZF_BINARY_TAR}" | tar xz -C /opt/fzf
-ln -s /opt/fzf/fzf /usr/local/bin/fzf
+ln -sf /opt/fzf/fzf /usr/local/bin/fzf
