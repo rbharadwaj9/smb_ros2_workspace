@@ -12,29 +12,29 @@ from ament_index_python.packages import get_package_share_directory
 def generate_launch_description():
     # Declare all launch arguments
     declared_arguments = [
-        DeclareLaunchArgument("launch_lidar", default_value="false", description="Launch LiDAR"),
+        DeclareLaunchArgument("launch_lidar", default_value="true", description="Launch LiDAR"),
         DeclareLaunchArgument("launch_tracking_cam", default_value="false", description="Launch Tracking Camera"),
         DeclareLaunchArgument("launch_depth_cam", default_value="false", description="Launch Depth Camera"),
         # FIXME: launch_imu_interface needs rosserial_python, but it does not exist in ros2, need to find another option
         DeclareLaunchArgument("launch_imu_interface", default_value="false", description="Launch IMU Interface"),
-        DeclareLaunchArgument("launch_rgb_cam", default_value="true", description="Launch RGB Camera"),
+        DeclareLaunchArgument("launch_rgb_cam", default_value="false", description="Launch RGB Camera"),
         DeclareLaunchArgument("launch_powerstatus", default_value="false", description="Launch Power Status"),
         DeclareLaunchArgument("tracking_cam_calib_odom_file", default_value="$(find smb)/config/tracking_camera_config.json", description="Path to config for odometry input to tracking camera"),
         DeclareLaunchArgument("smb_name", default_value="$(env SMB_NAME)", description="Name of the SMB in the format smb26x (relevant for calibrations)"),
         DeclareLaunchArgument("GPU_user", default_value="$(env USER)", description="Username to use on the Jetson Xavier GPU"),
     ]
 
-    # # Robosense LiDAR
-    # rslidar_config_file = get_package_share_directory('rslidar_sdk') + '/config/config.yaml'
-    # lidar_group = GroupAction([
-    #     Node(
-    #         package="rslidar_sdk",
-    #         executable="rslidar_sdk_node",
-    #         name="rslidar_sdk_node",
-    #         output="screen",
-    #         parameters=[{'rslidar_config_path': rslidar_config_file}]
-    #     )
-    # ], condition=IfCondition(LaunchConfiguration("launch_lidar")))
+    # Robosense LiDAR
+    rslidar_config_file = get_package_share_directory('smb_bringup') + '/config/rslidar_config.yaml'
+    lidar_group = GroupAction([
+        Node(
+            package="rslidar_sdk",
+            executable="rslidar_sdk_node",
+            name="rslidar_sdk_node",
+            output="screen",
+            parameters=[{'config_path': rslidar_config_file}]
+        )
+    ], condition=IfCondition(LaunchConfiguration("launch_lidar")))
 
     # # Intel RealSense Tracking Camera T265
     # tracking_camera_group = GroupAction([
@@ -165,26 +165,26 @@ def generate_launch_description():
 
         
     # Visualize in Rviz
-    rviz_config = get_package_share_directory('smb_bringup')+'/config/smb_vis.rviz'
+    # rviz_config = get_package_share_directory('smb_bringup')+'/config/smb_vis.rviz'
     
-    rviz_group = GroupAction([
-        Node(namespace='rviz2', 
-            package='rviz2', 
-            executable='rviz2', 
-            arguments=['-d',rviz_config]
-        )
-    ])
+    # rviz_group = GroupAction([
+    #     Node(namespace='rviz2', 
+    #         package='rviz2', 
+    #         executable='rviz2', 
+    #         arguments=['-d',rviz_config]
+    #     )
+    # ])
 
 
     return LaunchDescription(
         declared_arguments +
         [
-            # lidar_group,
+            lidar_group,
             # tracking_camera_group,
             # depth_camera_group,
             # imu_interface_group,
             rgb_camera_group,
             # power_status_group,
-            rviz_group,
+            # rviz_group,
         ]
     )
