@@ -56,9 +56,6 @@ apt-get install -y \
     wget \
     libboost-all-dev
 
-# ros-$TARGET_ROS_DISTRO-eigen-conversions \
-# ros-$TARGET_ROS_DISTRO-jsk-rviz-plugins \
-
 # Install GTSAM
 export PATH=/usr/local/bin:$PATH
 # Check if GTSAM is already installed by looking for a key header file
