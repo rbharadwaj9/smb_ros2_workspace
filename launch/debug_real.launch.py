@@ -1,11 +1,12 @@
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
 from launch.launch_description_sources import PythonLaunchDescriptionSource, FrontendLaunchDescriptionSource
 from launch.substitutions import PathJoinSubstitution, LaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from launch.substitutions import PythonExpression
 from ament_index_python.packages import get_package_share_directory
+import os
 
 
 
@@ -35,7 +36,7 @@ def generate_launch_description():
         executable="smb_kinematics_ros2_node",
         name="smb_kinematics_ros2_node",
         output="screen",
-        parameters=[{"use_sim_time": True}],
+        parameters=[{"use_sim_time": False}],
     )
 
     # Low-level gazebo controller node
@@ -44,7 +45,7 @@ def generate_launch_description():
         executable="smb_low_level_controller_gazebo_ros2_node",
         name="smb_low_level_controller_gazebo_ros2_node",
         output="screen",
-        parameters=[{"use_sim_time": True}],
+        parameters=[{"use_sim_time": False}],
     )
     
     joy_to_cmd_vel = Node(
@@ -52,7 +53,7 @@ def generate_launch_description():
         executable="smb_cmd_vel",
         name="smb_cmd_vel",
         output="screen",
-        parameters=[{"use_sim_time": True}],
+        parameters=[{"use_sim_time": False}],
     )
     
     joy = Node(
@@ -60,7 +61,7 @@ def generate_launch_description():
         executable="joy_node",
         name="joy_node",
         output="log",
-        parameters=[{"use_sim_time": True}],
+        parameters=[{"use_sim_time": False}],
     )
 
     # Terrain analysis node
@@ -69,7 +70,7 @@ def generate_launch_description():
         executable="terrainAnalysis",
         name="terrainAnalysis",
         output="screen",
-        parameters=[{"use_sim_time": True}],
+        parameters=[{"use_sim_time": False}],
     )
 
     # Terrain analysis ext node
@@ -78,7 +79,7 @@ def generate_launch_description():
         executable="terrainAnalysisExt",
         name="terrainAnalysisExt",
         output="screen",
-        parameters=[{"use_sim_time": True}],
+        parameters=[{"use_sim_time": False}],
     )
 
     # teleop_twist_joy launch include
@@ -116,7 +117,7 @@ def generate_launch_description():
         executable="smb_global_to_local_odometry",
         name="smb_global_to_local_odometry",
         output="screen",
-        parameters=[{"use_sim_time": True}],
+        parameters=[{"use_sim_time": False}],
     )
     
     far_planner_launch = IncludeLaunchDescription(
@@ -139,6 +140,16 @@ def generate_launch_description():
         ]),
     )
     
+    twist_pid = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([
+                FindPackageShare("twist_pid_controller"),
+                "launch",
+                "twist_pid_controller.launch.py"
+            ])
+        ),
+    )
+    
     rviz2 = Node(
         package='rviz2',
         executable='rviz2',
@@ -154,18 +165,40 @@ def generate_launch_description():
         respawn=False,
     )
 
+    default_config_topics = os.path.join(get_package_share_directory('smb_bringup'), 'config', 'twist_mux_topics.yaml')
+    
+    config_topics = DeclareLaunchArgument(
+            'config_topics',
+            default_value=default_config_topics,
+            description='Default topics config file'
+    )
+
+    twist_mux = Node(
+        package='twist_mux',
+        executable='twist_mux',
+        output='screen',
+        remappings={('/cmd_vel_out', '/cmd_vel')},
+        parameters=[
+            {'use_sim_time': False},
+            LaunchConfiguration('config_topics')]
+    )
+    
     return LaunchDescription([
-        gazebo_launch,
+        # gazebo_launch,
         kinematics_controller,
-        low_level_controller,
+        # low_level_controller,
         # joy_to_cmd_vel,
-        joy,
+        # joy,
         terrain_analysis,
         terrain_analysis_ext,
         # teleop_twist_joy_launch,
         dlio_launch,
+        local_odometry,
         static_tf_map_to_odom,
         far_planner_launch,
         local_planner_launch,
+        twist_pid,
+        config_topics,
+        twist_mux,
         rviz2,
     ])
