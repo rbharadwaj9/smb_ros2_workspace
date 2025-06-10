@@ -3,9 +3,52 @@
 # Exit on error
 set -e
 
+# Initialize variables
+IS_NUC=false
+IS_JETSON=false
+
+# Parse command line arguments
+if [ $# -eq 0 ]; then
+    echo "Error: No flag specified"
+    echo "Usage: sudo ./scripts/setup/setup-robot-host.sh [--nuc | --jetson]"
+    exit 1
+fi
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --nuc)
+            IS_NUC=true
+            shift
+            ;;
+        --jetson)
+            IS_JETSON=true
+            shift
+            ;;
+        *)
+            echo "Invalid flag: $1"
+            echo "Usage: sudo ./scripts/setup/setup-robot-host.sh [--nuc | --jetson]"
+            exit 1
+            ;;
+    esac
+done
+
+# Check for mutual exclusivity
+if [ "$IS_NUC" = true ] && [ "$IS_JETSON" = true ]; then
+    echo "Error: --nuc and --jetson flags are mutually exclusive"
+    echo "Usage: sudo ./scripts/setup/setup-robot-host.sh [--nuc | --jetson]"
+    exit 1
+fi
+
+# Check if at least one flag is set
+if [ "$IS_NUC" = false ] && [ "$IS_JETSON" = false ]; then
+    echo "Error: Either --nuc or --jetson flag must be specified"
+    echo "Usage: sudo ./scripts/setup/setup-robot-host.sh [--nuc | --jetson]"
+    exit 1
+fi
+
 # Check if running with sudo
 if [ "$EUID" -ne 0 ]; then 
-    echo "Please run this script with sudo, e.g. sudo ./scripts/setup/setup-robot-host.sh"
+    echo "Please run this script with sudo, e.g. sudo ./scripts/setup/setup-robot-host.sh [--nuc | --jetson]"
     exit 1
 fi
 
@@ -28,26 +71,54 @@ apt-get update
 
 # Install essential system utilities
 echo "Installing essential system utilities..."
-apt-get install -yq --no-install-recommends \
-    sudo \
-    gh \
-    git \
-    git-lfs \
-    curl \
-    wget \
-    ca-certificates \
-    gnupg \
-    lsb-release \
-    htop \
-    glances \
-    net-tools \
-    python3 \
-    python3-pip \
-    python-is-python3 \
-    software-properties-common
+if [ "$IS_JETSON" = true ]; then
+    apt-get install -yq --no-install-recommends \
+        sudo \
+        git \
+        git-lfs \
+        curl \
+        wget \
+        ca-certificates \
+        gnupg \
+        lsb-release \
+        htop \
+        glances \
+        net-tools \
+        python3 \
+        python3-pip \
+        python3-colcon-common-extensions \
+        libpcap-dev \
+        python-is-python3 \
+        software-properties-common
+    
+    # Install colcon-clean using pip3 for Jetson
+    if grep -q "24.04" /etc/os-release; then
+        pip3 install --no-cache-dir --break-system-packages -U colcon-clean
+    else
+        pip3 install --no-cache-dir -U colcon-clean
+    fi
+else
+    apt-get install -yq --no-install-recommends \
+        sudo \
+        gh \
+        git \
+        git-lfs \
+        curl \
+        wget \
+        ca-certificates \
+        gnupg \
+        lsb-release \
+        htop \
+        glances \
+        net-tools \
+        python3 \
+        python3-pip \
+        python-is-python3 \
+        software-properties-common
+fi
 
 # Add universe repository
-add-apt-repository universe
+add-apt-repository -y universe
 
 # Install development tools
 echo "Installing development tools..."
@@ -86,13 +157,19 @@ echo "Running additional setup scripts..."
 echo "Setting up fzf..."
 ${ROOT}/scripts/setup/setup-fzf.sh 0.52.1
 
-# Install ROS2
-echo "Setting up ROS2..."
-${ROOT}/scripts/setup/setup-ros.sh
+# Install ROS2 and Graph MSF only if --nuc flag is set
+if [ "$IS_NUC" = true ]; then
+    echo "Setting up ROS2..."
+    ${ROOT}/scripts/setup/setup-ros.sh
 
-# Install Graph MSF
-echo "Setting up Graph MSF..."
-${ROOT}/scripts/setup/setup-graph-msf.sh
+    echo "Setting up Graph MSF..."
+    ${ROOT}/scripts/setup/setup-graph-msf.sh
+fi
+
+# Create symlink for network configuration
+echo "Setting up network configuration..."
+ln -sf ${ROOT}/scripts/config/10-cyclone-max.conf /etc/sysctl.d/10-cyclone-max.conf
+sysctl -p /etc/sysctl.d/10-cyclone-max.conf
 
 # Setup shell configurations
 echo "Setting up shell configurations..."
@@ -124,6 +201,21 @@ fi
 # Setup git config
 echo "Setting up git configuration..."
 sudo -u ${USER} git config --global core.autocrlf false # Prevent line ending conversion on Windows
+
+# Clean up
+echo "Cleaning up..."
+apt-get clean
+pip cache purge
+rm -rf /tmp/*
+
+# Source the appropriate shell configuration
+if [ "$SHELL" = "/bin/zsh" ]; then
+    echo "Sourcing .zshrc..."
+    sudo -u ${USER} zsh -c "source ${USER_HOME}/.zshrc"
+elif [ "$SHELL" = "/bin/bash" ]; then
+    echo "Sourcing .bashrc..."
+    sudo -u ${USER} bash -c "source ${USER_HOME}/.bashrc"
+fi 
 
 # Setup tmux
 echo "Setting up tmux configuration..."
@@ -157,10 +249,4 @@ sudo -u ${USER} ${USER_HOME}/.tmux/plugins/tpm/bin/install_plugins
 # Stop tmux server
 sudo -u ${USER} tmux kill-server
 
-# Clean up
-echo "Cleaning up..."
-apt-get clean
-pip cache purge
-rm -rf /tmp/*
-
-echo "Robot host setup completed successfully!" 
+echo "Robot host setup completed successfully!"
