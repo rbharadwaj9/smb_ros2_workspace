@@ -22,7 +22,7 @@ def generate_launch_description():
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 PathJoinSubstitution([
-                    FindPackageShare("smb_kinematics_ros2"), "launch", "smb_differential_drive.launch.py"
+                    FindPackageShare("smb_kinematics"), "launch", "smb_differential_drive.launch.py"
                 ])
             ),
         ),
