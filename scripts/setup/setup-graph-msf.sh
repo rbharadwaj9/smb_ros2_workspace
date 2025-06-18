@@ -1,6 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Parse command line arguments
+FORCE_INSTALL=false
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -f|--force)
+            FORCE_INSTALL=true
+            shift
+            ;;
+        *)
+            echo "Unknown option: $1"
+            exit 1
+            ;;
+    esac
+done
+
 # Verify root privileges before proceeding
 if [[ "$EUID" -ne 0 ]] ; then
   echo "ERROR: graph-msf install must be run as root, please run:"
@@ -59,7 +74,7 @@ apt-get install -y \
 # Install GTSAM
 export PATH=/usr/local/bin:$PATH
 # Check if GTSAM is already installed by looking for a key header file
-if [ -f "/usr/local/include/gtsam/base/Vector.h" ]; then
+if [ -f "/usr/local/include/gtsam/base/Vector.h" ] && [ "$FORCE_INSTALL" = false ]; then
     echo "GTSAM is already installed"
 else
     echo "Installing GTSAM..."
@@ -82,31 +97,5 @@ else
     rm -rf gtsam_fork
     echo "GTSAM installed successfully"
 fi
-
-# Install Open3D
-# readonly OPEN3D_VERSION="0.17.0"
-# readonly OPEN3D_INSTALL_DIR="/usr/local"
-
-# echo "Installing Open3D version ${OPEN3D_VERSION}..."
-# wget -qO- https://github.com/isl-org/Open3D/archive/refs/tags/v${OPEN3D_VERSION}.tar.gz | tar xzv -C /tmp
-
-# cd /tmp/Open3D-${OPEN3D_VERSION}
-# chmod +x util/install_deps_ubuntu.sh
-# DEBIAN_FRONTEND=noninteractive SUDO=command ./util/install_deps_ubuntu.sh assume-yes
-
-# mkdir build && cd build
-# cmake -DCMAKE_INSTALL_PREFIX=${OPEN3D_INSTALL_DIR} \
-#     -DBUILD_SHARED_LIBS=ON \
-#     -DBUILD_EXAMPLES=OFF \
-#     -DBUILD_PYTHON_MODULE=OFF \
-#     -DBUILD_GUI=OFF \
-#     -DCMAKE_BUILD_TYPE=Release \
-#     -DDEVELOPER_BUILD=OFF ..
-# make -j$(nproc)
-# make install
-# cd /tmp
-# rm -rf Open3D-${OPEN3D_VERSION}
-
-# exit 0
 
 echo "Graph MSF dependencies installation completed for ROS2 $TARGET_ROS_DISTRO!"
