@@ -133,6 +133,9 @@ def generate_launch_description():
                 "far_planner.launch"
             ])
         ]),
+        # launch_arguments={
+        #     "use_sim_time": use_sim_time
+        # }.items(),
     )
     
     local_planner_launch = IncludeLaunchDescription(
@@ -143,6 +146,9 @@ def generate_launch_description():
                 "local_planner.launch"
             ])
         ]),
+        launch_arguments={
+            "use_sim_time": use_sim_time
+        }.items(),
     )
     
     twist_pid = IncludeLaunchDescription(
