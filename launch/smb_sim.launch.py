@@ -105,6 +105,15 @@ def generate_launch_description():
         condition=UnlessCondition(use_ground_truth),
     )
     
+    relay_odom_to_dlio = Node(
+        package="topic_tools",
+        executable="relay",
+        name="relay_odom_to_dlio",
+        arguments=["/odom", "/dlio/odom_node/odom"],
+        output="screen",
+        condition=IfCondition(use_ground_truth)
+    )
+
     local_odometry = Node(
         package="smb_kinematics",
         executable="smb_global_to_local_odometry",
@@ -114,22 +123,6 @@ def generate_launch_description():
             {"use_sim_time": use_sim_time},
             {"use_ground_truth": use_ground_truth}
         ],
-        remappings=[
-            ('/odom', '/dlio/odom_node/odom')
-        ],
-        condition=IfCondition(use_ground_truth)
-    )
-    
-    local_odometry_default = Node(
-        package="smb_kinematics",
-        executable="smb_global_to_local_odometry",
-        name="smb_global_to_local_odometry",
-        output="screen",
-        parameters=[
-            {"use_sim_time": use_sim_time},
-            {"use_ground_truth": use_ground_truth}
-        ],
-        condition=UnlessCondition(use_ground_truth)
     )
     
     far_planner_launch = IncludeLaunchDescription(
@@ -196,8 +189,8 @@ def generate_launch_description():
         terrain_analysis,
         terrain_analysis_ext,
         dlio_launch,
+        relay_odom_to_dlio,
         local_odometry,
-        local_odometry_default,
         static_tf_map_to_odom,
         far_planner_launch,
         local_planner_launch,
