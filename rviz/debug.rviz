@@ -99,7 +99,7 @@ Visualization Manager:
             Durability Policy: Volatile
             History Policy: Keep Last
             Reliability Policy: Reliable
-            Value: /dlio/odom_node/pointcloud/deskewed
+            Value: /registered_scan
           Use Fixed Frame: true
           Use rainbow: true
           Value: true
@@ -132,7 +132,7 @@ Visualization Manager:
             Durability Policy: Volatile
             History Policy: Keep Last
             Reliability Policy: Reliable
-            Value: /dlio/odom_node/pointcloud/deskewed
+            Value: /registered_scan
           Use Fixed Frame: true
           Use rainbow: true
           Value: false
@@ -210,7 +210,7 @@ Visualization Manager:
             Filter size: 10
             History Policy: Keep Last
             Reliability Policy: Reliable
-            Value: /dlio/odom_node/odom
+            Value: /state_estimation
           Value: false
         - Alpha: 1
           Arrow Length: 0.30000001192092896
