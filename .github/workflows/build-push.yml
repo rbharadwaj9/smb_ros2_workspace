@@ -16,7 +16,7 @@ on:
       - 'main'
       - 'workspace/**'
     paths:
-      - '.github/docker/**'
+      - '.github/**'
       - 'scripts/setup/**'
 
 defaults:
