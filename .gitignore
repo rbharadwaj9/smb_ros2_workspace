@@ -110,3 +110,6 @@ src/visualization/smb_rviz_plugins
 # Data files
 /data/rosbags/*
 !/data/rosbags/.gitkeep
+
+# Ignore gitman log
+dependencies/gitman.log
