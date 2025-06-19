@@ -102,7 +102,7 @@ def generate_launch_description():
             "pointcloud_topic": "/rslidar/points",
             "imu_topic": "/imu/data_raw",
             "odom_topic": "/state_estimation",
-            "registered_pointcloud_topic": "/state_estimation/pointcloud/deskewed",
+            "registered_pointcloud_topic": "/registered_scan",
         }.items(),
         condition=UnlessCondition(use_ground_truth),
     )
@@ -144,7 +144,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             [get_package_share_directory('tare_planner'), '/explore_robotx.launch']),
         launch_arguments={
-            "use_sim_time": 'true',
+            "use_sim_time": use_sim_time,
             "rviz": "true",
         }.items(),
     )
