@@ -68,14 +68,27 @@ def generate_launch_description():
             parameters=[{'config_path': rslidar_config_file}]
         )
 
-    # Low-level gazebo controller node
-    low_level_controller = Node(
-        package="smb_low_level_controller_gazebo",
-        executable="smb_low_level_controller_gazebo_node",
-        name="smb_low_level_controller_gazebo_node",
-        output="screen",
-        parameters=[{"use_sim_time": False}],
+    # # Low-level gazebo controller node
+    # low_level_controller = Node(
+    #     package="smb_low_level_controller_gazebo",
+    #     executable="smb_low_level_controller_gazebo_node",
+    #     name="smb_low_level_controller_gazebo_node",
+    #     output="screen",
+    #     parameters=[{"use_sim_time": False}],
+    # )
+    
+    low_level_controller = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            PathJoinSubstitution([
+                FindPackageShare("smb_low_level_controller"),
+                "launch",
+                "speed_control_node.launch.py"
+            ])
+        ]),
     )
+    
+    
+    
     
     joy_to_cmd_vel = Node(
         package="smb_kinematics",
@@ -217,13 +230,13 @@ def generate_launch_description():
         robot_state_publisher_node,
         rslidar,
         kinematics_controller,
-        # low_level_controller,
+        low_level_controller,
         # joy_to_cmd_vel,
         # joy,
         # terrain_analysis,
         # terrain_analysis_ext,
         # teleop_twist_joy_launch,
-        dlio_launch,
+        # dlio_launch,
         # local_odometry,
         # static_tf_map_to_odom,
         # far_planner_launch,
