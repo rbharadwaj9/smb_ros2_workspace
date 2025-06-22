@@ -12,7 +12,6 @@ import os
 
 
 def generate_launch_description():
-    # --- Declare all launch arguments in a list ---
     default_config_topics = os.path.join(get_package_share_directory('smb_bringup'), 'config', 'twist_mux_topics.yaml')
     launch_args = [
         DeclareLaunchArgument(
@@ -35,7 +34,6 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
     use_ground_truth = LaunchConfiguration('use_ground_truth')
 
-    # Include the main gazebo launch file
     gazebo_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution([
@@ -88,7 +86,6 @@ def generate_launch_description():
         parameters=[{"use_sim_time": use_sim_time}],
     )
 
-    # dlio launch include
     dlio_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             PathJoinSubstitution([
@@ -126,19 +123,6 @@ def generate_launch_description():
             {"use_ground_truth": use_ground_truth}
         ],
     )
-    
-    # far_planner_launch = IncludeLaunchDescription(
-    #     PythonLaunchDescriptionSource([
-    #         PathJoinSubstitution([
-    #             FindPackageShare("far_planner"),
-    #             "launch",
-    #             "far_planner.launch"
-    #         ])
-    #     ]),
-    #     # launch_arguments={
-    #     #     "use_sim_time": use_sim_time
-    #     # }.items(),
-    # )
     
     exploration_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -197,7 +181,6 @@ def generate_launch_description():
             LaunchConfiguration('config_topics')]
     )
     
-    # --- At the end, expand the launch_args list ---
     return LaunchDescription([
         *launch_args,
         gazebo_launch,

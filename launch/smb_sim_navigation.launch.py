@@ -12,7 +12,6 @@ import os
 
 
 def generate_launch_description():
-    # --- Declare all launch arguments in a list ---
     default_config_topics = os.path.join(get_package_share_directory('smb_bringup'), 'config', 'twist_mux_topics.yaml')
     launch_args = [
         DeclareLaunchArgument(
@@ -35,7 +34,6 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
     use_ground_truth = LaunchConfiguration('use_ground_truth')
 
-    # Include the main gazebo launch file
     gazebo_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution([
@@ -54,7 +52,6 @@ def generate_launch_description():
         output="log",
     )
 
-    # Kinematics controller node
     kinematics_controller = Node(
         package="smb_kinematics",
         executable="smb_kinematics_node",
@@ -63,7 +60,6 @@ def generate_launch_description():
         parameters=[{"use_sim_time": use_sim_time}],
     )
 
-    # Low-level gazebo controller node
     low_level_controller = Node(
         package="smb_low_level_controller_gazebo",
         executable="smb_low_level_controller_gazebo_node",
@@ -88,7 +84,6 @@ def generate_launch_description():
         parameters=[{"use_sim_time": use_sim_time}],
     )
 
-    # dlio launch include
     dlio_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             PathJoinSubstitution([
@@ -135,9 +130,6 @@ def generate_launch_description():
                 "far_planner.launch"
             ])
         ]),
-        # launch_arguments={
-        #     "use_sim_time": use_sim_time
-        # }.items(),
     )
     
     local_planner_launch = IncludeLaunchDescription(
@@ -188,7 +180,6 @@ def generate_launch_description():
             LaunchConfiguration('config_topics')]
     )
     
-    # --- At the end, expand the launch_args list ---
     return LaunchDescription([
         *launch_args,
         gazebo_launch,
