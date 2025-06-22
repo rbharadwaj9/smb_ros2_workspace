@@ -16,7 +16,15 @@ def generate_launch_description():
         package="tf2_ros",
         executable="static_transform_publisher",
         name="static_map_to_odom",
-        arguments=["0", "0", "0", "0", "0", "0", "map", "odom"],
+        arguments=["0", "0", "0", "0", "0", "0", "odom", "map"],
+        output="log",
+    )
+    
+    static_tf_map_to_graph_msf = Node(
+        package="tf2_ros",
+        executable="static_transform_publisher",
+        name="static_map_to_graph_msf",
+        arguments=["0", "0", "0", "0", "0", "0", "world_graph_msf", "odom"],
         output="log",
     )
 
@@ -239,9 +247,10 @@ def generate_launch_description():
         open_slam_launch,
         local_odometry,
         static_tf_map_to_odom,
+        static_tf_map_to_graph_msf,
         # far_planner_launch,
         # local_planner_launch,
-        # twist_pid,
+        twist_pid,
         config_topics,
         twist_mux,
         # rviz2,
