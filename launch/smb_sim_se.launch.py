@@ -11,6 +11,27 @@ import os
 
 
 def generate_launch_description():
+    
+    default_config_topics = os.path.join(get_package_share_directory('smb_bringup'), 'config', 'twist_mux_topics.yaml')
+    launch_args = [
+        DeclareLaunchArgument(
+            'use_sim_time',
+            default_value='true',
+            description='Use simulation (Gazebo) clock if true'
+        ),
+        DeclareLaunchArgument(
+            'use_ground_truth',
+            default_value='true',
+            description='Use ground truth odometry (true/false). If false, launches DLIO.'
+        ),
+        DeclareLaunchArgument(
+            'config_topics',
+            default_value=default_config_topics,
+            description='Default topics config file'
+        ),
+    ]
+    
+    use_sim_time = LaunchConfiguration('use_sim_time')
 
     kinematics_controller = Node(
         package="smb_kinematics",
@@ -25,14 +46,6 @@ def generate_launch_description():
         executable="smb_low_level_controller_gazebo_node",
         name="smb_low_level_controller_gazebo_node",
         output="screen",
-        parameters=[{"use_sim_time": True}],
-    )
-    
-    joy = Node(
-        package="joy",
-        executable="joy_node",
-        name="joy_node",
-        output="log",
         parameters=[{"use_sim_time": True}],
     )
 
@@ -69,10 +82,21 @@ def generate_launch_description():
         ),
     )
     
+    twist_mux = Node(
+        package='twist_mux',
+        executable='twist_mux',
+        output='screen',
+        remappings={('/cmd_vel_out', '/cmd_vel')},
+        parameters=[
+            {'use_sim_time': use_sim_time},
+            LaunchConfiguration('config_topics')]
+    )
+    
     return LaunchDescription([
+        *launch_args,
+        twist_mux,
         kinematics_controller,
         low_level_controller,
-        joy,
         gmsf_launch,
         open3d_slam_launch,
         smb_ui
