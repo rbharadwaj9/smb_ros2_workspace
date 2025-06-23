@@ -161,7 +161,7 @@ ${ROOT}/scripts/setup/setup-fzf.sh 0.52.1
 if [ "$IS_NUC" = true ]; then
 
     # Setup PTP & PHC
-    readonly PTP4L_CONF="${ROOT}/scripts/config/ptp4l.service"
+    readonly PTP4L_CONF="${ROOT}/scripts/config/ptp4l_master.service"
     cp "$PTP4L_CONF" "/etc/systemd/system/ptp4l.service"
 
     systemctl daemon-reload
@@ -186,6 +186,16 @@ if [ "$IS_NUC" = true ]; then
 
     echo "Setting up Graph MSF..."
     ${ROOT}/scripts/setup/setup-graph-msf.sh
+fi
+
+if [ "$IS_JETSON" = true ]; then
+    # Setup PTP & PHC
+    readonly PTP4L_CONF="${ROOT}/scripts/config/ptp4l_slave.service"
+    cp "$PTP4L_CONF" "/etc/systemd/system/ptp4l.service"
+
+    systemctl daemon-reload
+    systemctl enable ptp4l
+    systemctl start ptp4l
 fi
 
 # Create symlink for network configuration

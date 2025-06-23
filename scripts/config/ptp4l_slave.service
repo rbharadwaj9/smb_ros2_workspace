@@ -1,0 +1,10 @@
+[Unit]
+Description=PTP client for system clock synchronization
+After=network.target
+
+[Service]
+ExecStart=/usr/sbin/ptp4l -i eth0 -S -2 -m
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
