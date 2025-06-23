@@ -162,6 +162,15 @@ def generate_launch_description():
         ]),
     )
     
+    exploration_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [get_package_share_directory('tare_planner'), '/explore_robotx.launch']),
+        launch_arguments={
+            "use_sim_time": "false",
+            "rviz": "true",
+        }.items(),
+    )
+    
     local_planner_launch = IncludeLaunchDescription(
         FrontendLaunchDescriptionSource([
             PathJoinSubstitution([
@@ -254,6 +263,7 @@ def generate_launch_description():
         local_odometry,
         static_tf_map_to_odom,
         static_tf_map_to_graph_msf,
+        # exploration_launch,
         # far_planner_launch,
         # local_planner_launch,
         twist_pid,
