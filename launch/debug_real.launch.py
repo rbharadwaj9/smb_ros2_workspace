@@ -1,6 +1,6 @@
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
-from launch.launch_description_sources import PythonLaunchDescriptionSource, FrontendLaunchDescriptionSource
+from launch.launch_description_sources import PythonLaunchDescriptionSource, FrontendLaunchDescriptionSource, AnyLaunchDescriptionSource
 from launch.substitutions import PathJoinSubstitution, LaunchConfiguration, Command, FindExecutable
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
@@ -92,22 +92,26 @@ def generate_launch_description():
         parameters=[{"use_sim_time": False}],
     )
 
-    # Terrain analysis node
-    terrain_analysis = Node(
-        package="terrain_analysis",
-        executable="terrainAnalysis",
-        name="terrainAnalysis",
-        output="screen",
-        parameters=[{"use_sim_time": False}],
+    # Terrain analysis launch include
+    terrain_analysis_launch = IncludeLaunchDescription(
+        FrontendLaunchDescriptionSource([
+            PathJoinSubstitution([
+                FindPackageShare("terrain_analysis"),
+                "launch",
+                "terrain_analysis.launch"
+            ])
+        ]),
     )
 
-    # Terrain analysis ext node
-    terrain_analysis_ext = Node(
-        package="terrain_analysis_ext",
-        executable="terrainAnalysisExt",
-        name="terrainAnalysisExt",
-        output="screen",
-        parameters=[{"use_sim_time": False}],
+    # Terrain analysis ext launch include
+    terrain_analysis_ext_launch = IncludeLaunchDescription(
+        FrontendLaunchDescriptionSource([
+            PathJoinSubstitution([
+                FindPackageShare("terrain_analysis_ext"),
+                "launch",
+                "terrain_analysis_ext.launch"
+            ])
+        ]),
     )
 
     # teleop_twist_joy launch include
@@ -142,8 +146,8 @@ def generate_launch_description():
     
     local_odometry = Node(
         package="smb_kinematics",
-        executable="smb_global_to_local_odometry",
-        name="smb_global_to_local_odometry",
+        executable="odometry_and_pointcloud_conversion_graph_msf",
+        name="odometry_and_pointcloud_conversion_graph_msf",
         output="screen",
         parameters=[{"use_sim_time": False}],
     )
@@ -231,6 +235,8 @@ def generate_launch_description():
         ),
     ) 
     
+    
+    
     return LaunchDescription([
         # gazebo_launch,
         robot_state_publisher_node,
@@ -239,8 +245,8 @@ def generate_launch_description():
         low_level_controller,
         # joy_to_cmd_vel,
         # joy,
-        terrain_analysis,
-        terrain_analysis_ext,
+        terrain_analysis_launch,
+        terrain_analysis_ext_launch,
         # teleop_twist_joy_launch,
         # dlio_launch,
         graph_msf_launch,
