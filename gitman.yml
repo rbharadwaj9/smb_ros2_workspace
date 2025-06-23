@@ -60,7 +60,7 @@ sources:
         target: src/estimation/holistic_fusion
   - name: smb_bringup
     repo: git@github.com:rbharadwaj9/smb_bringup.git
-    rev: main
+    rev: state_estimation_dev
     type: git
     links:
       - source: .
