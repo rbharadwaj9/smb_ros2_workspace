@@ -1,0 +1,13 @@
+[Unit]
+Description=Discipline system clock from PHC (Grandmaster NUC)
+After=ptp4l.service
+Requires=ptp4l.service
+
+[Service]
+ExecStart=/usr/sbin/phc2sys -s CLOCK_REALTIME -c enp86s0 -w -m -S 1
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
