@@ -1,0 +1,23 @@
+digraph G {
+"odom" -> "base_link"[label=" Broadcaster: default_authority\nAverage rate: 100.2\nBuffer length: 5.0\nMost recent transform: 167.7\nOldest transform: 162.7\n"];
+"base_link" -> "base_inertia"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"imu_link" -> "imu_sensor"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"base_link" -> "imu_link"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"base_link" -> "lidar_mount_link"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"lidar_mount_link" -> "rslidar"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"base_link" -> "rgb_camera_link"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"rgb_camera_link" -> "rgb_camera_optical_link"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"base_link" -> "top"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"base_link" -> "LF_WHEEL"[label=" Broadcaster: default_authority\nAverage rate: 20.2\nBuffer length: 5.0\nMost recent transform: 167.7\nOldest transform: 162.7\n"];
+"base_link" -> "LH_WHEEL"[label=" Broadcaster: default_authority\nAverage rate: 20.2\nBuffer length: 5.0\nMost recent transform: 167.7\nOldest transform: 162.7\n"];
+"base_link" -> "RF_WHEEL"[label=" Broadcaster: default_authority\nAverage rate: 20.2\nBuffer length: 5.0\nMost recent transform: 167.7\nOldest transform: 162.7\n"];
+"base_link" -> "RH_WHEEL"[label=" Broadcaster: default_authority\nAverage rate: 20.2\nBuffer length: 5.0\nMost recent transform: 167.7\nOldest transform: 162.7\n"];
+"base_link" -> "odom_graph_msf"[label=" Broadcaster: default_authority\nAverage rate: 28.34\nBuffer length: 4.94\nMost recent transform: 167.64\nOldest transform: 162.7\n"];
+"odom_graph_msf" -> "world_graph_msf"[label=" Broadcaster: default_authority\nAverage rate: 28.34\nBuffer length: 4.94\nMost recent transform: 167.64\nOldest transform: 162.7\n"];
+"world_graph_msf" -> "map_o3d_graph_msf_aligned"[label=" Broadcaster: default_authority\nAverage rate: 4.366\nBuffer length: 4.81\nMost recent transform: 167.54\nOldest transform: 162.73\n"];
+"rslidar" -> "map_o3d"[label=" Broadcaster: default_authority\nAverage rate: 3.095\nBuffer length: 4.2\nMost recent transform: 167.0\nOldest transform: 162.8\n"];
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1750796699.941444"[ shape=plaintext ] ;
+}->"odom";
+}
